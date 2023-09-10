@@ -1,6 +1,9 @@
-"""Load and Process olid_datasets
-   Olid_dataset : tweets that contain offensive word or meaning and another clean
-"""
+"""Load , Process olid_datasets and split it"""
+import os
+from datasets import Dataset
+import json
+from collections import defaultdict
+
 
 def load_data(path: str) -> dict:
     """
@@ -26,7 +29,7 @@ def prepare_data(path: str) -> dict:
     train_data = load_data(os.path.join(path, "olid_train.json"))
     test_data = load_data(os.path.join(path, "olid_test.json"))
 
-    # Create a dictionary to obtain previous two data to convert them into dataset format
+    # Create a dictionary to obtain previous two data and convert them into dataset format
     dictData = defaultdict(list)
     olied_dataset = {}
     for data, data_name in zip([train_data, test_data], ["train", "test"]):
@@ -38,3 +41,31 @@ def prepare_data(path: str) -> dict:
         olied_dataset[data_name] =  Dataset.from_dict(dictData)
 
     return olied_dataset
+
+
+def split_data(training_data, annotated_data_prec: float = 0.2):
+    """
+    Splits the given training data into a training set and a test set.
+
+    Args:
+        training_data (any): the data to split.
+        annotated_data_prec (float): the proportion of the data to use as training data.
+
+    Returns:
+        tuple: the training set and the test set.
+    """
+    return training_data.train_test_split(train_size=annotated_data_prec)
+
+
+def create_dataset_of_label_propagation(text_data, pred_labels):
+    """
+    Creates a dataset of text data with corresponding predicted labels.
+
+    Args:
+        text_data (list): list of text data.
+        pred_labels (list): list of predicted labels.
+
+    Returns:
+        Dataset: the dataset of text data with corresponding predicted labels.
+    """
+    return Dataset.from_dict({"tweets": text_data, "labels": pred_labels})
