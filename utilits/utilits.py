@@ -1,3 +1,7 @@
+"""Load and Process olid_datasets
+   Olid_dataset : tweets that contain offensive word or meaning and another clean
+"""
+
 def load_data(path: str) -> dict:
     """
     Load review data (json format).
