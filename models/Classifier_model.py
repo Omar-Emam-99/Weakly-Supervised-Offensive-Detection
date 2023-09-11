@@ -1,8 +1,10 @@
-from transformers import AutoConfig, AutoTokenizer, AutoModelForSequenceClassification
-from transformers import Trainer, TrainingArguments
 import torch
 import os
+from torch import nn
 from torch.utils.data import DataLoader
+from transformers import AutoConfig, AutoTokenizer, AutoModelForSequenceClassification
+from transformers import Trainer, TrainingArguments
+import torch.nn.functional as F
 from sklearn.metrics import (
     confusion_matrix,
     accuracy_score,
@@ -10,6 +12,44 @@ from sklearn.metrics import (
     recall_score,
     f1_score
 )
+from models.noiseAsareLoss import (
+    NormalizedCrossEntropy,
+    ReverseCrossEntropy,
+    NCEandRCE,
+    MeanAbsoluteError,
+    NCEandMAE
+)
+
+
+#Create CustomTrainer that inherit from Trainer Class and overwrite compute_loss with NoiseAware loss function
+class CustomTrainer(Trainer):
+    """
+    A custom PyTorch trainer class that computes the loss using the NCEandMAE module.
+    """
+
+    def compute_loss(self, model, inputs, return_outputs=False):
+        """
+        Computes the loss for the given inputs and model.
+
+        Args:
+        - model (nn.Module): The PyTorch model being trained
+        - inputs (Dict[str, Tensor]): A dictionary containing the inputs to the model
+        - return_outputs (bool): Whether or not to also return the model outputs
+
+        Returns:
+        - loss (Tensor): A tensor representing the total loss of the model
+        - outputs (Dict[str, Tensor]): A dictionary containing the outputs of the model, if return_outputs is True
+        """
+        labels = inputs.pop("labels")
+        # forward pass
+        outputs = model(**inputs)
+        logits = outputs.get("logits")
+        # compute custom loss 
+        loss_fct = NCEandMAE(1,1,2)
+        #loss = loss_fct(logits.view(-1, self.model.config.num_labels), labels.view(-1))
+        loss = loss_fct(logits , labels)
+        return (loss, outputs) if return_outputs else loss
+
 
 class ClassifierModel:
     """
@@ -66,7 +106,7 @@ class ClassifierModel:
         """
         labels = pred.label_ids
         preds = pred.predictions.argmax(-1)
-        f1 = f1_score(labels, preds, average="weighted")
+        f1 = f1_score(labels, preds)
         precision = precision_score(labels, preds)
         recall = recall_score(labels, preds)
         acc = accuracy_score(labels, preds)
@@ -134,7 +174,7 @@ class ClassifierModel:
             eval_dataset=eval_encoded,
             tokenizer=self.tokenizer
         )
-
+            
         trainer.train()
 
         if os.path.isdir("artifacts"):
@@ -156,12 +196,13 @@ class ClassifierModel:
 
         """
         test_encoded = test_data.map(self.tokenize, batched=True, batch_size=None)
-
+        
         trainer = Trainer(
             self.model,
             compute_metrics=ClassifierModel.compute_metrics
         )
+            
 
-        preds = trainer.predict(test_encoded)
+        preds = Trainer.predict(test_encoded)
 
         return preds.metrics
