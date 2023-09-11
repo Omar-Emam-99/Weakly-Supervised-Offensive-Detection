@@ -202,7 +202,6 @@ class ClassifierModel:
             compute_metrics=ClassifierModel.compute_metrics
         )
             
-
-        preds = Trainer.predict(test_encoded)
+        preds = trainer.predict(test_encoded)
 
         return preds.metrics
