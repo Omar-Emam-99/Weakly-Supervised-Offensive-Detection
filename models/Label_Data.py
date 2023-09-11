@@ -1,5 +1,5 @@
-from LP import LabelPropagation , LabelSpreading
-from simCSE import SimCSE
+from models.LP import LabelPropagation , LabelSpreading
+from models.simCSE import SimCSE
 import joblib
 
 
@@ -36,7 +36,7 @@ class DataLabeling :
 
 
     def generate_labels(self,annoteted_data,
-                       annotations ,
+                       annotations,
                        unlabeled_data):
         """
         Generates labels for the unlabeled data using the LabelSpreading algorithm.
@@ -65,6 +65,4 @@ class DataLabeling :
             filename (str): The name of the file to save the LP object to.
         """
         # Use joblib.dump to save the LP object to the specified file
-        joblib.dump(self.LP, filename)
-
-        
+        joblib.dump(self.LP, filename)        
