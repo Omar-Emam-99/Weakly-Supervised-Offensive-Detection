@@ -70,7 +70,19 @@ def create_dataset_of_label_propagation(text_data, pred_labels):
     """
     return Dataset.from_dict({"tweets": text_data, "labels": pred_labels})
 
-def save_data_json(data , path):
-    with open(path ,"w") as obj :
-        json.dump(data ,obj)
-        
+
+def save_data_json(data, path):
+    """
+    Saves the given data as a JSON file at the specified path.
+
+    Args:
+        data (dict): The data to be saved as JSON.
+        path (str): The path where the JSON file will be saved.
+
+    Returns:
+        None
+    """
+    # Open the file at the specified path in write mode
+    with open(path, "w") as file_obj:
+        # Serialize the data as JSON and write it to the file
+        json.dump(data, file_obj)

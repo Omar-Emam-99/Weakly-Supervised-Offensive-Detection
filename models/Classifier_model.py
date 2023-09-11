@@ -1,10 +1,10 @@
 import torch
 import os
 from torch import nn
-from torch.utils.data import DataLoader
-from transformers import AutoConfig, AutoTokenizer, AutoModelForSequenceClassification
-from transformers import Trainer, TrainingArguments
 import torch.nn.functional as F
+from torch.utils.data import DataLoader
+from transformers import Trainer, TrainingArguments
+from transformers import AutoConfig, AutoTokenizer, AutoModelForSequenceClassification
 from sklearn.metrics import (
     confusion_matrix,
     accuracy_score,
@@ -12,7 +12,7 @@ from sklearn.metrics import (
     recall_score,
     f1_score
 )
-from models.noiseAsareLoss import (
+from models.NoiseAwareLoss import (
     NormalizedCrossEntropy,
     ReverseCrossEntropy,
     NCEandRCE,
