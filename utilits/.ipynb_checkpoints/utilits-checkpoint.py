@@ -69,3 +69,8 @@ def create_dataset_of_label_propagation(text_data, pred_labels):
         Dataset: the dataset of text data with corresponding predicted labels.
     """
     return Dataset.from_dict({"tweets": text_data, "labels": pred_labels})
+
+def save_data_json(data , path):
+    with open(path ,"w") as obj :
+        json.dump(data ,obj)
+        
