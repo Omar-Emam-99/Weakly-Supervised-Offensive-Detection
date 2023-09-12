@@ -91,5 +91,5 @@ This allows the model to capture meaningful semantic information in the embeddin
 <!-- Acknowledgments -->
 ## Acknowledgments
 
-- Self-supervised Semi-supervised Learning for Data Labeling and Quality Evaluation paper.
-- SimCSE: Simple Contrastive Learning of Sentence Embeddings
+- Self-supervised Semi-supervised Learning for Data Labeling and Quality Evaluation.[<a href="https://arxiv.org/abs/2111.10932">Paper</a>]
+- SimCSE: Simple Contrastive Learning of Sentence Embeddings [<a href="https://arxiv.org/abs/2104.08821">Paper</a>]
