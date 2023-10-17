@@ -1,6 +1,7 @@
 from langchain import PromptTemplate, HuggingFaceHub, LLMChain, FewShotPromptTemplate
 from utilits import create_dataset_of_label_propagation
 from langchain.llms import Cohere
+import time
 from tqdm.auto import tqdm
 
 class LLMAnnotator:
@@ -37,10 +38,14 @@ class LLMAnnotator:
         Returns:
         - labeled_data: Dataset with annotated labels
         """
+        
+        
         llm_cohere = LLMChain(prompt=self.prompt_template, llm=self.LLM)
         labels = []
-        for example in tqdm(data):
+        #Cohere API allow a 10 calls per minute
+        for example in tqdm(range(0 , len(data) ,10)):
             gen_label = llm_cohere.run(example)
             labels.append(0 if gen_label == "Not offensive" else 1)
-
+            time.sleep(60)
+            
         return create_dataset_of_label_propagation(data, labels)
