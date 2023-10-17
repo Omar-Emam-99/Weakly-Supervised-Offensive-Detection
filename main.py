@@ -2,6 +2,7 @@ from models import LabelPropagation , LabelSpreading
 from utilits.utilits import *
 from models import ClassifierModel
 from models import DataLabeling
+from llm_annotator import LLMAnnotator
 import argparse
 
 if __name__ == "__main__" :
@@ -41,8 +42,25 @@ if __name__ == "__main__" :
                            action='store_true',
                           required=False)
     
+    #Annotate data with LLMs
+    arg_parse.add_argument('--annotate_with_llms',
+                           dest='annotate_with_llms',
+                           action='store_true',
+                           required=False,
+                           help="""
+                           Annotate Data with large language models and the one we generate and see that we can get good results
+                           LLM : Cohere-"command"
+                           for CL provide [data_path] and [COHERE-API-TOKEN] 
+                           """)
+    
+    arg_parse.add_argument('--data_path_llm' , dest='data_path_llm',type=str, required=False)
+    arg_parse.add_argument('--api_token' , dest='api_token',type=int, required=False)
+    
+    
+    
     args =  arg_parse.parse_args()
     
+    #Annotate data with LabelPropagation
     if args.generate:
         
         olid_dataset = prepare_data(args.path)
@@ -58,8 +76,14 @@ if __name__ == "__main__" :
         new_annotated_data = create_dataset_of_label_propagation(annoteted_data["test"]["tweets"],
                                                                  preds_labels)
         if args.save_data :
-            save_data_json(new_annotated_data ,arg.save_data)
+            save_data_json(new_annotated_data ,args.save_data)
     
+    #Annotate data with LLMs Command
+    if args.annotate_with_llms :
+        llm_annotator = LLMAnnotator(args.api_token)
+        llm_annotator.annotate(args.data_path_llm)
+        
+    #train data with Distelbert for sentence Classification Model 
     if args.train :
         data = prepare_data(args.data_path)
         train_data = split_data(data["train"], annotated_data_prec=0.8)
