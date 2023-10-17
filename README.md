@@ -80,7 +80,18 @@ This allows the model to capture meaningful semantic information in the embeddin
     - in olid dataset we got a training and test set in json files ,so with training data we will split it to :
       - small set (20%) of training to be an annotated 
       - The rest to be unlabeled data
-2. Train Classifier Model :
+
+2. Annotate Data with Large language models :
+    ```
+    python main.py --annotate_with_llms \
+      --data_path_llm "path to unlabeled data" \
+      --api_token "Cohere-API-Token"
+    ```
+    * Note That The Cohere API free trial allows for 10 calls per minute. 
+
+
+
+3. Train Classifier Model :
     ```
     python main.py --train\
       --data_path "path"\
