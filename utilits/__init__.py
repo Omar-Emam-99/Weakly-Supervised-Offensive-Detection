@@ -5,6 +5,7 @@ from .utilits import (
     split_data,
     create_dataset_of_label_propagation,
     save_data_json,
+    deserialize
 )
 
 __all__ = ["CustomDataset",
@@ -12,4 +13,5 @@ __all__ = ["CustomDataset",
            "load_data",
            "split_data",
            "create_dataset_of_label_propagation",
-           "save_data_json"]
+           "save_data_json",
+           "deserialize"]
