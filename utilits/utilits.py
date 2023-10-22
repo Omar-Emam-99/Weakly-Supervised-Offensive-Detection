@@ -1,9 +1,11 @@
 """Load , Process olid_datasets and split it"""
 import os
-from datasets import Dataset
 import json
+import re
+import json
+import traceback
+from datasets import Dataset
 from collections import defaultdict
-
 
 def load_data(path: str) -> dict:
     """
@@ -86,3 +88,43 @@ def save_data_json(data, path):
     with open(path, "w") as file_obj:
         # Serialize the data as JSON and write it to the file
         json.dump(data, file_obj)
+        
+        
+def deserialize(json_dict_str):
+    """
+    Deserialize a JSON dictionary string into a Python dictionary.
+
+    Args:
+        json_dict_str (str): The JSON dictionary string to be deserialized.
+
+    Returns:
+        dict: The deserialized Python dictionary.
+    """
+    json_dict = {}
+    try:
+        json_dict = json.loads(json_dict_str)
+    except:
+        traceback.print_exc()
+
+    if not json_dict:
+        try:
+            json_dict = json.loads(re.sub(r"(?<!\\w)'|'(?!\\w)",
+                                          '"', json_dict_str))
+        except:
+            traceback.print_exc()
+
+    if not json_dict:
+        try:
+            json_dict = json.loads(re.sub(r"(?<!\\w)'|'(?!\\w)", 
+                                          '"', json_dict_str.replace('"', '\\\\"')))
+        except:
+            traceback.print_exc()
+
+    if not json_dict:
+        try:
+            json_dict = json.loads(re.sub(r"(?<!\\w)'|'(?!\\w)", '"', 
+                                          json_dict_str.replace('"', '\\\\"')))
+        except:
+            traceback.print_exc()
+
+    return json_dict
