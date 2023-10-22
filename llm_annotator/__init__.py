@@ -1,3 +1,3 @@
 from .llm_annotator import LLMAnnotator
-
-__all__ = ["LLMAnnotator"]
+from .LllamaAnnotator import LllamaAnnotator
+__all__ = ["LLMAnnotator" , "LllamaAnnotator"]
