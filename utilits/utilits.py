@@ -3,9 +3,25 @@ import os
 import json
 import re
 import json
+import sys
 import traceback
 from datasets import Dataset
 from collections import defaultdict
+
+
+
+def remove_emoji(string):
+    emoji_pattern = re.compile("["
+                           u"\U0001F600-\U0001F64F"  # emoticons
+                           u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                           u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                           u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                           u"\U00002702-\U000027B0"
+                           u"\U000024C2-\U0001F251"
+                           "]+", flags=re.UNICODE)
+    
+    return emoji_pattern.sub(r'', string)
+
 
 def load_data(path: str) -> dict:
     """
@@ -37,7 +53,8 @@ def prepare_data(path: str) -> dict:
     for data, data_name in zip([train_data, test_data], ["train", "test"]):
         dictData.clear()
         for t_value, label_value in zip(data["tweet"].values(), data["subtask_a"].values()):
-            dictData["tweets"].append(t_value)
+            tweet = remove_emoji(t_value).replace("@USER"  , '')
+            dictData["tweets"].append(tweet)
             dictData["labels"].append(1 if label_value =="OFF" else 0)
             dictData["labels_name"].append(label_value)
         olied_dataset[data_name] =  Dataset.from_dict(dictData)
