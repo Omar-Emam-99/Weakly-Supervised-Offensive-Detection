@@ -145,7 +145,6 @@ class ClassifierModel:
         - weight_decay: a float representing the weight decay to use during training
         - disable_tqdm: a boolean indicating whether to disable the progress bar during training
         - log_level: a string representing the logging level to use during training
-
         """
 
         train_encoded = train_data.map(self.tokenize, batched=True, batch_size=None)
@@ -154,7 +153,7 @@ class ClassifierModel:
         logging_steps = len(train_encoded["input_ids"]) // batch_size
 
         training_args = TrainingArguments(
-            output_dir="DBERT",
+            output_dir="Distel_bert",
             num_train_epochs=num_epochs,
             learning_rate=2e-5,
             per_device_train_batch_size=batch_size,
@@ -202,7 +201,7 @@ class ClassifierModel:
             self.model,
             compute_metrics = ClassifierModel.compute_metrics
         )
-            
+
         preds = trainer.predict(test_encoded)
 
         return preds.metrics

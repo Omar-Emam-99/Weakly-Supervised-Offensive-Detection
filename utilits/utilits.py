@@ -61,6 +61,38 @@ def prepare_data(path: str) -> dict:
 
     return olied_dataset
 
+def format_dataset(path, split):
+    """
+    Formats the dataset for a specified split (e.g., "train", "dev", "test").
+
+    Args:
+    - path (str): Path to the dataset.
+    - split (str): The split of the dataset to format.
+
+    Returns:
+    - data (list): List of dictionaries, where each dictionary contains 'text' and 'label' keys.
+
+    Example:
+    - format_dataset("dataset", "train") returns a list of dictionaries representing the training dataset.
+    """
+
+    # `prepare_data` is a function that loads and preprocesses the dataset
+    olid_data = prepare_data(path)
+
+    # Extract tweets and labels from the specified split
+    tweets, labels = olid_data[split]["tweets"], olid_data["train"]["labels_name"]
+
+    # Initialize variables
+    sample, data = {}, []
+
+    # Create a list of dictionaries where each dictionary represents a data sample
+    for t in zip(tweets ,labels):
+        sample["text"], sample["label"] = t
+        data.append(sample)
+        sample = {}  # Reset sample for the next iteration
+
+    return data
+
 
 def split_data(training_data, annotated_data_prec: float = 0.2):
     """

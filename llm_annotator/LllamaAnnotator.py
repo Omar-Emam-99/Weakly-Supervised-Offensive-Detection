@@ -70,7 +70,7 @@ class LllamaAnnotator:
             task='text-generation',
             temperature=0.0,  # 'randomness' of outputs, 0.0 is the min and 1.0 the max
             max_new_tokens=512,  # max number of tokens to generate in the output
-            torch_dtype=torch.float16
+            torch_dtype=torch.bfloat16
         )
 
         return generate_text
