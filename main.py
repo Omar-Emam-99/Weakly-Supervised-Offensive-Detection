@@ -2,7 +2,7 @@ from models import LabelPropagation , LabelSpreading
 from utilits.utilits import *
 from models import ClassifierModel
 from models import DataLabeling
-from llm_annotator import LLMAnnotator
+from llm_annotator import LllamaAnnotator
 import argparse
 
 if __name__ == "__main__" :
@@ -49,8 +49,8 @@ if __name__ == "__main__" :
                            required=False,
                            help="""
                            Annotate Data with large language models and the one we generate and see that we can get good results
-                           LLM : Cohere-"command"
-                           for CL provide [data_path] and [COHERE-API-TOKEN] 
+                           LLM : Llama-"7-13-70"
+                           for CL provide [data_path] and [LLAMA-API-TOKEN] 
                            """)
     
     arg_parse.add_argument('--data_path_llm' , dest='data_path_llm',type=str, required=False)
@@ -79,8 +79,8 @@ if __name__ == "__main__" :
             save_data_json(new_annotated_data ,args.save_data)
     
     #Annotate data with LLMs Command
-    if args.annotate_with_llms :
-        llm_annotator = LLMAnnotator(args.api_token)
+    if args.annotate_with_llms : 
+        llm_annotator = LllamaAnnotator(args.api_token)
         llm_annotator.annotate(args.data_path_llm)
         
     #train data with Distelbert for sentence Classification Model 
@@ -95,4 +95,3 @@ if __name__ == "__main__" :
         if args.test :
             preds = m.test(data["test"])
             print(preds)
-            
