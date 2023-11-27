@@ -8,8 +8,8 @@ class MyDataset(Dataset):
     """
     Custom Dataset for loading the data
     """
-
-    def __init__(self, raw_data, label_dict, tokenizer, model_name, method):
+    
+    def __init__(self, raw_data, label_dict, tokenizer, model_name):
         """
         raw_data : list of dict
             The raw data to be loaded
@@ -19,11 +19,9 @@ class MyDataset(Dataset):
             Tokenizer object to tokenize the data
         model_name : str
             Name of the model
-        method : str
-            Method used for tokenization
         """
         # List of labels for classification or empty list
-        label_list = list(label_dict.keys()) if method not in ['ce', 'scl'] else []
+        label_list = list(label_dict.keys()) 
         # Different separator tokens for different models
         sep_token = ['[SEP]'] if model_name == 'bert' else ['</s>']
         dataset = list()
@@ -47,7 +45,7 @@ class MyDataset(Dataset):
         """
         return len(self._dataset)
 
-def my_collate(batch, tokenizer, method, num_classes):
+def my_collate(batch, tokenizer, num_classes):
     """
     Function to collate the data
     """
@@ -62,15 +60,14 @@ def my_collate(batch, tokenizer, method, num_classes):
                          add_special_tokens=True,
                          return_tensors='pt')
 
-    # If the method is not 'ce' or 'scl', add position ids
-    if method not in ['ce', 'scl']:
-        positions = torch.zeros_like(text_ids['input_ids'])
-        positions[:, num_classes:] = torch.arange(0, text_ids['input_ids'].size(1)-num_classes)
-        text_ids['position_ids'] = positions
+    
+    positions = torch.zeros_like(text_ids['input_ids'])
+    positions[:, num_classes:] = torch.arange(0, text_ids['input_ids'].size(1)-num_classes)
+    text_ids['position_ids'] = positions
         
     return text_ids, torch.tensor(label_ids)
 
-def load_data(data, tokenizer, batch_size, model_name, method, workers):
+def load_data(data, tokenizer, batch_size, model_name, workers):
     """
     Function to load the data
     """
@@ -78,45 +75,13 @@ def load_data(data, tokenizer, batch_size, model_name, method, workers):
     label_dict = {'NOT': 0, 'OFF': 1}
 
     # Initialize the custom dataset
-    dataset = MyDataset(data, label_dict, tokenizer, model_name, method)
+    dataset = MyDataset(data, label_dict, tokenizer, model_name)
     # Define the collate function
     collate_fn = partial(my_collate,
                          tokenizer=tokenizer,
-                         method=method,
                          num_classes=len(label_dict))
+
     # Initialize the dataloader
     dataloader = DataLoader(dataset, batch_size, shuffle=True, num_workers=workers, collate_fn=collate_fn, pin_memory=True)
 
     return dataloader
-
-def format_dataset(path, split):
-    """
-    Formats the dataset for a specified split (e.g., "train", "dev", "test").
-
-    Args:
-    - path (str): Path to the dataset.
-    - split (str): The split of the dataset to format.
-
-    Returns:
-    - data (list): List of dictionaries, where each dictionary contains 'text' and 'label' keys.
-
-    Example:
-    - format_dataset("dataset", "train") returns a list of dictionaries representing the training dataset.
-    """
-
-    # `prepare_data` is a function that loads and preprocesses the dataset
-    olid_data = prepare_data(path)
-
-    # Extract tweets and labels from the specified split
-    tweets, labels = olid_data[split]["tweets"], olid_data["train"]["labels_name"]
-
-    # Initialize variables
-    sample, data = {}, []
-
-    # Create a list of dictionaries where each dictionary represents a data sample
-    for t in zip(labels, tweets):
-        sample["text"], sample["label"] = t
-        data.append(sample)
-        sample = {}  # Reset sample for the next iteration
-
-    return data
