@@ -84,12 +84,9 @@ This allows the model to capture meaningful semantic information in the embeddin
 2. Annotate Data with Large language models :
     ```
     python main.py --annotate_with_llms \
-      --data_path_llm "path to unlabeled data" \
-      --api_token "Cohere-API-Token"
+      --data_path_llm "path-to-unlabeled-data" \
+      --api_token "LLAMA-API-Token"
     ```
-    * Note That The Cohere API free trial allows for 10 calls per minute. 
-
-
 
 3. Train Classifier Model :
     ```
