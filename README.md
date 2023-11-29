@@ -95,7 +95,13 @@ This allows the model to capture meaningful semantic information in the embeddin
       --num_epoch 3\
       --test 
     ```
-
+4. Train DCL model on few data and make it as annotator for new data
+    ```
+    python main.py --DCL 
+      --few_data_DCL_train "path"
+      --few_data_DCL_valid "path"
+      --inference "unlabeled_data"
+    ```
 <!-- Acknowledgments -->
 ## Acknowledgments
 
