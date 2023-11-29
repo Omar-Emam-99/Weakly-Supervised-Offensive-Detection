@@ -50,6 +50,9 @@ This allows the model to capture meaningful semantic information in the embeddin
 - Use distelbert-base-uncased as an encoder and CrossEntorpy loss for last hidden state head for specific task.
 - Try to perform a NoiseAware loss function .
 
+##### Dual Contrastive Learning 
+* framework that simultaneously learns the features of input samples and the parameters of classifiers in the same space. Specifically, DualCL regards the parameters of the classifiers as augmented samples associating to different labels and then exploits the contrastive learning between the input samples and the augmented samples.
+
 <!-- Getting Started -->
 ### Getting Started
 
@@ -87,20 +90,21 @@ This allows the model to capture meaningful semantic information in the embeddin
       --data_path_llm "path-to-unlabeled-data" \
       --api_token "LLAMA-API-Token"
     ```
-
-3. Train Classifier Model :
-    ```
-    python main.py --train\
-      --data_path "path"\
-      --num_epoch 3\
-      --test 
-    ```
-4. Train DCL model on few data and make it as annotator for new data
+    
+3. Train DCL model on few data and make it as annotator for new data
     ```
     python main.py --DCL 
       --few_data_DCL_train "path"
       --few_data_DCL_valid "path"
       --inference "unlabeled_data"
+    ```
+
+4. Train Classifier Model :
+    ```
+    python main.py --train\
+      --data_path "path"\
+      --num_epoch 3\
+      --test 
     ```
 <!-- Acknowledgments -->
 ## Acknowledgments
