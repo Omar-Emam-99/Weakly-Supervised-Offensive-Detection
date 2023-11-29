@@ -2,8 +2,10 @@ from models import LabelPropagation , LabelSpreading
 from utilits.utilits import *
 from models import ClassifierModel
 from models import DataLabeling
+from models import DualConstractiveLearningTrainer
 from llm_annotator import LllamaAnnotator
 import argparse
+
 
 if __name__ == "__main__" :
     
@@ -56,6 +58,21 @@ if __name__ == "__main__" :
     arg_parse.add_argument('--data_path_llm' , dest='data_path_llm',type=str, required=False)
     arg_parse.add_argument('--api_token' , dest='api_token',type=int, required=False)
     
+    #Annotate data via Dual-Contrastive-Learning
+    arg_parse.add_argument('--DCL',
+                           dest='Dual-Contrastive-Learning',
+                           action='store_true',
+                           required=False,
+                           help="""
+                           given a few data to train DCL model can help to annotate more data
+                           """)
+    
+    arg_parse.add_argument('--few_data_DCL_train' , dest='few_data_DCL',type=str, required=False)
+    arg_parse.add_argument('--few_data_DCL_valid' , dest='few_data_DCL_valid',type=str, required=False)
+    arg_parse.add_argument('--inference' , dest='inference',type=int, required=False)
+    
+    
+    
     
     
     args =  arg_parse.parse_args()
@@ -82,6 +99,13 @@ if __name__ == "__main__" :
     if args.annotate_with_llms : 
         llm_annotator = LllamaAnnotator(args.api_token)
         llm_annotator.annotate(args.data_path_llm)
+    
+    if args.DCL :
+        DCL_model = DualConstractiveLearningTrainer()
+        DCL_model.train(args.few_data_DCL_train , args.few_data_DCL_valid)
+        DCL_model.inference(args.inference)
+        
+    
         
     #train data with Distelbert for sentence Classification Model 
     if args.train :
